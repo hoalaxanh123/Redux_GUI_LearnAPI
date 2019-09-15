@@ -39,7 +39,8 @@
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
+    <div id="root">
+    </div>
     <script
       src="https://code.jquery.com/jquery-3.4.1.min.js"
       integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
@@ -52,24 +53,6 @@
     ></script>
     <script defer src="%PUBLIC_URL%/fontawesome/js/all.js"></script>
     <!--load all styles -->
-    <script>
-      function MessageShow(params) {
-        new Noty({
-          text: params,
-          type: alert,
-          timeout: 5000,
-          progressBar: true,
-          modal: true,
-          visibilityControl: true,
-          layout: "topRight",
-          theme: "mint",
-          closeWith: ["click", "button"],
-          animation: {
-            open: "animated fadeInRight",
-            close: "animated fadeOutRight"
-          }
-        }).show();
-      }
-    </script>
+
   </body>
 </html>

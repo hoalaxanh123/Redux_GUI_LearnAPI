@@ -3,7 +3,6 @@ import { connect } from "react-redux";
 
 class ProductList extends Component {
   render() {
-console.log('this.props :', this.props);
     return (
       <div className="panel panel-success mt-5">
         <div className="panel-heading">
