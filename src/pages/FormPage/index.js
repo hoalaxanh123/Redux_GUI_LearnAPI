@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import callAPI from "./../../utils/callerAPI";
 import Message from "./../../method/Message";
 import { connect } from "react-redux";
 import * as action from "./../../actions";
@@ -44,27 +43,28 @@ class Form extends Component {
     try {
       if (this.props.match) {
         let id = this.props.match ? this.props.match.params.id : "";
-        callAPI("GET", `products/${id}`, {}).then(res => {
-          if (res.data) {
-            this.setState({
-              id: res.data.id,
-              txtName: res.data.name,
-              txtDes: res.data.des,
-              txtPrice: res.data.price,
-              txtStatus: res.data.status
-            });
-          }
-        });
-      } else {
+        this.props.get_product_by_id(id);
       }
     } catch (error) {
       Message("Error: " + error);
     }
   }
+  UNSAFE_componentWillReceiveProps(nextProps) {
+    if (nextProps && nextProps.productEditing) {
+      let product = nextProps.productEditing;
+      if (product) {
+        this.setState({
+          id: product.id,
+          txtName: product.name,
+          txtDes: product.des,
+          txtPrice: product.price,
+          txtStatus: product.status
+        });
+      } else {
+      }
+    }
+  }
   render() {
-    //TODO: LOAD INFOMATION PRODUCT
-    //Link: https://www.youtube.com/watch?v=lvoKyI5u58w&list=PLJ5qtRQovuEOoKffoCBzTfvzMTTORnoyp&index=97
-    let idPro = this.props.match ? this.props.match.params.id : "";
     return (
       <div className="container">
         <div className="row">
@@ -73,7 +73,7 @@ class Form extends Component {
               <legend>
                 <legend>
                   Vui lòng nhập đầy đủ thông tin (
-                  {idPro === "" ? "Thêm" : "Sửa"})
+                  {this.props.match ? "Sửa" : "Thêm"})
                 </legend>
 
                 <div className="form-group">
@@ -152,8 +152,9 @@ class Form extends Component {
   }
 }
 const mapStateToProps = (state, ownProps) => {
+  console.log("object :", state.ProductEditing);
   return {
-    prop: state.prop
+    productEditing: state.ProductEditing
   };
 };
 const mapDispatchToProps = (dispatch, ownProps) => {
@@ -163,6 +164,9 @@ const mapDispatchToProps = (dispatch, ownProps) => {
     },
     update_productReQuest: product => {
       dispatch(action.update_productReQuest(product));
+    },
+    get_product_by_id: product_id => {
+      dispatch(action.get_product_by_id_Request(product_id));
     }
   };
 };
