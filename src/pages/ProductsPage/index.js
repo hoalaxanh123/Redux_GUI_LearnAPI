@@ -3,8 +3,8 @@ import { Link } from "react-router-dom";
 import { connect } from "react-redux";
 import ProductsList from "./../../components/ProductsList";
 import ProductItem from "./../../components/ProductItem";
-import callAPI from "./../../utils/callerAPI";
 import Message from "./../../method/Message";
+import * as action from "./../../actions";
 
 class ProductsPage extends Component {
   constructor(props) {
@@ -14,36 +14,19 @@ class ProductsPage extends Component {
     };
   }
   componentDidMount() {
-    callAPI("GET", "products", {}).then(res => {
-      this.setState({
-        products: res.data
-      });
-    });
+    this.props.get_all_products();
   }
-  onDelete = id => {
-    if (confirm("Sure to delete?")) {      //eslint-disable-line
-
+  onDelete = product_id => {
+    if (confirm("Sure to delete?")) { //eslint-disable-line
       try {
-        callAPI("DELETE", `products/${id}`, {}).then(res => {
-          if(res){
-            if (res.status === 200) {
-              let products = this.state.products;
-              let index = products.findIndex(x => x.id === id);
-              products.splice(index, 1);
-              Message("Đã xoá thành công<br/>id: " + id, "success");
-              this.setState({
-                products: products
-              });
-            } else Message("Lỗi khi xoá<br/>Error code: " + res.status, "error");
-          }
-        });
+        this.props.delete_productReQuest(product_id);
       } catch (error) {
-        Message("Lỗi khi xoá<br/>Error code: " + error, "error");
+        Message("Lỗi khi xoá<br/>Error: " + error, "error");
       }
     }
   };
   render() {
-    let productList = this.state.products;
+    let productList = this.props.ListProduct;
     return (
       <div className="container">
         <div className="row">
@@ -84,8 +67,11 @@ const mapStateToProps = (state, ownProps) => {
 };
 const mapDispatchToProps = (dispatch, ownProps) => {
   return {
-    dispatch1: () => {
-      dispatch("actionCreator");
+    get_all_products: () => {
+      dispatch(action.get_all_products());
+    },
+    delete_productReQuest: product_id => {
+      dispatch(action.delete_productReQuest(product_id));
     }
   };
 };

@@ -4,7 +4,7 @@ import Navigation from "./components/Navigation";
 import Routers from "./Routers/Routers";
 import { BrowserRouter as Router } from "react-router-dom";
 import { connect } from "react-redux";
-import * as actions from "./actions/index";
+// import * as actions from "./actions";
 
 function App() {
   return (
@@ -26,7 +26,7 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = (dispatch, ownProps) => {
   return {
     dispatch1: () => {
-      dispatch(actions.LIST_GETALL())
+      dispatch('')
     }
   }
 }

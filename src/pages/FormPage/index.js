@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import callAPI from "./../../utils/callerAPI";
 import Message from "./../../method/Message";
+import { connect } from "react-redux";
+import * as action from "./../../actions";
 
 class Form extends Component {
   constructor(props) {
@@ -11,7 +13,7 @@ class Form extends Component {
       txtName: "",
       txtDes: "",
       txtPrice: "",
-      txtStatus: ""
+      txtStatus: "0"
     };
   }
 
@@ -24,24 +26,18 @@ class Form extends Component {
   BlockSubmitForm = event => {
     event.preventDefault();
     let Product = {
-      id: -1,
+      id: this.state.id,
       name: this.state.txtName,
       des: this.state.txtDes,
       price: this.state.txtPrice,
       status: this.state.txtStatus
     };
     if (!this.props.match) {
-      callAPI("POST", "products", Product).then(res => {
-        Message("Thêm thành công sản phẩm vào cơ sở dữ liệu", "success");
-        this.props.history.goBack();
-      });
+      this.props.add_productReQuest(Product);
+      this.props.history.goBack();
     } else {
-      callAPI("PUT", `products/${this.state.id}`, Product).then(res => {
-        Product.id = this.state.id;
-        console.log('Product :', Product);
-        Message("Cật nhật sản phẩm thành công", "success");
-        this.props.history.goBack();
-      });
+      this.props.update_productReQuest(Product);
+      this.props.history.goBack();
     }
   };
   componentDidMount() {
@@ -49,9 +45,7 @@ class Form extends Component {
       if (this.props.match) {
         let id = this.props.match ? this.props.match.params.id : "";
         callAPI("GET", `products/${id}`, {}).then(res => {
-          if(res.data)
-          {
-            console.log('res :', res);
+          if (res.data) {
             this.setState({
               id: res.data.id,
               txtName: res.data.name,
@@ -60,7 +54,6 @@ class Form extends Component {
               txtStatus: res.data.status
             });
           }
-
         });
       } else {
       }
@@ -127,15 +120,19 @@ class Form extends Component {
                   <label>Tình trạng:</label>
 
                   <select
+                    value={this.state.txtStatus}
                     name="txtStatus"
                     id="status"
                     className="form-control"
                     required="required"
                     onChange={this.onChange}
                   >
-                    <option value="0" selected={this.state.txtStatus==='0'?'selected':''}>Còn hàng</option>
-                    <option value="1" selected={this.state.txtStatus==='1'?'selected':''}>Hết hàng</option>
-                    <option value="2" selected={this.state.txtStatus==='2'?'selected':''}>Ngừng kinh doanh</option>
+                    <option value="0">Còn hàng</option>
+                    <option value="1">Hết hàng</option>
+                    <option value="2">Ngừng kinh doanh</option>
+                    {/* <option value="0" selected={this.state.txtStatus==='0'}>Còn hàng</option>
+                    <option value="1" selected={this.state.txtStatus==='1'}>Hết hàng</option>
+                    <option value="2" selected={this.state.txtStatus==='2'}>Ngừng kinh doanh</option> */}
                   </select>
                 </div>
                 <Link to="/products" className="btn btn-primary">
@@ -154,4 +151,22 @@ class Form extends Component {
     );
   }
 }
-export default Form;
+const mapStateToProps = (state, ownProps) => {
+  return {
+    prop: state.prop
+  };
+};
+const mapDispatchToProps = (dispatch, ownProps) => {
+  return {
+    add_productReQuest: product => {
+      dispatch(action.add_productReQuest(product));
+    },
+    update_productReQuest: product => {
+      dispatch(action.update_productReQuest(product));
+    }
+  };
+};
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Form);
